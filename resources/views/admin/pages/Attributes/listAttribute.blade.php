@@ -6,8 +6,7 @@
 {{-- ================================== --}}
 
 @push('css_library')
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.0.0/fonts/remixicon.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
+
 @endpush
 
 @push('css')
@@ -74,7 +73,6 @@
                                     <th>Name</th>
                                     <th>Variant</th>
                                     <th>Active</th>
-                                    <th>Value</th>
                                     <th>Created At</th>
                                     <th>Updated At</th>
                                     <th>Option</th>
@@ -99,13 +97,13 @@
                                                         class="  "><span class="switch-state"></span></label></div>
                                         </div>
                                     </td>
-                                    <td>
-                                        <a href="{{ route('admin.Attributes.Value') }}"> <i class="fa fa-eye"></i></a>
-                                    </td>
                                     <td>01-07-2024</td>
                                     <td>01-07-2024</td>
                                     <td>
                                         <ul>
+                                            <li>
+                                                <a href="{{ route('admin.Attributes.Value') }}"> <i class="fa fa-eye"></i></a>
+                                            </li>
                                             <!-- Nút để mở Modal -->
                                             <li>
                                                 <a href="javascript:void(0)" onclick="openEditModal()">
@@ -140,13 +138,13 @@
                                                         class="  "><span class="switch-state"></span></label></div>
                                         </div>
                                     </td>
-                                    <td>
-                                        <a href="{{ route('admin.Attributes.Value') }}"> <i class="fa fa-eye"></i></a>
-                                    </td>
                                     <td>01-07-2024</td>
                                     <td>01-07-2024</td>
                                     <td>
                                         <ul>
+                                            <li>
+                                                <a href="{{ route('admin.Attributes.Value') }}"> <i class="fa fa-eye"></i></a>
+                                            </li>
                                             <li>
                                                 <!-- Nút sửa -->
                                                 <a href="javascript:void(0)" onclick="openEditModal(1)">
@@ -180,43 +178,48 @@
                 </div>
             </div>
             <!-- Modal for Add and Edit -->
-            <div class="modal fade" id="attributeModal" tabindex="-1" aria-labelledby="attributeModalLabel"
-                aria-hidden="true">
+            <div class="modal fade" id="attributeModal" tabindex="-1" aria-labelledby="attributeModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="modalTitle">Add/Edit Attribute</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <form id="attributeForm">
                             <div class="modal-body">
                                 <input type="hidden" id="attributeId" name="id">
-
+            
                                 <div class="mb-3">
                                     <label for="name" class="form-label">Name:</label>
                                     <input type="text" class="form-control" id="name" name="name" required>
                                 </div>
-
-                                <div class="mb-3">
-                                    <label for="is_variant" class="form-label">Is Variant:</label>
-                                    <div class="col-sm-10">
-                                        <div class="form-check form-switch ps-0"><label class="switch"><input
-                                                    type="checkbox" id="status" formcontrolname="status"
-                                                    class="  "><span class="switch-state"></span></label></div>
+            
+                                <div class="row mb-3 align-items-center">
+                                    <!-- Is Variant -->
+                                    <div id="is_variant_row" class="col-md-6 d-flex align-items-center justify-content-between">
+                                        <label for="is_variant" class="form-label me-2 mb-0">Is Variant:</label>
+                                        <div class="form-check form-switch ps-0 mb-0">
+                                            <label class="switch">
+                                                <input type="checkbox" id="is_variant" formcontrolname="is_variant" class="">
+                                                <span class="switch-state"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+            
+                                    <!-- Is Active -->
+                                    <div id="is_active_row" class="col-md-6 d-flex align-items-center justify-content-between">
+                                        <label for="is_active" class="form-label me-2 mb-0">Is Active:</label>
+                                        <div class="form-check form-switch ps-0 mb-0">
+                                            <label class="switch">
+                                                <input type="checkbox" id="is_active" formcontrolname="is_active" class="">
+                                                <span class="switch-state"></span>
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <div class="mb-3">
-                                    <label for="is_active" class="form-label">Is Active:</label>
-                                    <div class="col-sm-10">
-                                        <div class="form-check form-switch ps-0"><label class="switch"><input
-                                                    type="checkbox" id="status" formcontrolname="status"
-                                                    class="  "><span class="switch-state"></span></label></div>
-                                    </div>
-                                </div>
+            
                             </div>
-
+            
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 <button type="submit" id="modalActionButton" class="btn btn-primary">Save</button>
@@ -225,6 +228,7 @@
                     </div>
                 </div>
             </div>
+            
 
 
             <!-- Modal Confirm Delete -->
@@ -257,7 +261,7 @@
 {{-- ================================== --}}
 
 @push('js_library')
-    <script src="/theme/admin/assets/js/notify/index.js"></script>
+  
 @endpush
 
 @push('js')
@@ -301,28 +305,32 @@
             window.openAddModal = function() {
                 openModal('add');
             };
-
+    
             // Mở modal cho chỉnh sửa
             window.openEditModal = function(attributeId) {
                 openModal('edit', attributeId);
             };
-
+    
             // Hàm mở modal
             function openModal(action, attributeId = null) {
                 const modalTitle = $('#modalTitle');
                 const modalActionButton = $('#modalActionButton');
-
+    
                 // Reset form trước khi mở modal
                 $('#attributeForm')[0].reset();
                 $('#attributeId').val('');
-
+    
                 if (action === 'add') {
                     modalTitle.text('Add Attribute');
                     modalActionButton.text('Save');
+    
+                    // Hiển thị lại các trường Is Variant và Is Active khi thêm mới
+                    $('#is_variant_row').removeClass('d-none');
+                    $('#is_active_row').removeClass('d-none');
                 } else if (action === 'edit') {
                     modalTitle.text('Edit Attribute');
                     modalActionButton.text('Save');
-
+    
                     // Giả lập dữ liệu để chỉnh sửa (có thể thay thế bằng API thực tế)
                     const attributeData = {
                         id: attributeId,
@@ -330,24 +338,29 @@
                         is_variant: 1,
                         is_active: 1,
                     };
-
+    
                     // Điền dữ liệu vào form
                     $('#attributeId').val(attributeData.id);
                     $('#name').val(attributeData.name);
-                    $('#is_variant').val(attributeData.is_variant);
-                    $('#is_active').val(attributeData.is_active);
+                    $('#is_variant').prop('checked', attributeData.is_variant === 1);
+                    $('#is_active').prop('checked', attributeData.is_active === 1);
+    
+                    // Ẩn các trường "Is Variant" và "Is Active" khi chỉnh sửa
+                    $('#is_variant_row').addClass('d-none');
+                    $('#is_active_row').addClass('d-none');
                 }
-
+    
                 // Hiển thị modal
                 $('#attributeModal').modal('show');
             }
-
+    
             // Hàm đóng modal
             window.closeModal = function() {
                 $('#attributeModal').modal('hide');
             };
         });
     </script>
+    
 
     <!--modal xoa-->
     <script>

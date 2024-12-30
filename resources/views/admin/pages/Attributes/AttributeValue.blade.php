@@ -6,7 +6,6 @@
 {{-- ================================== --}}
 
 @push('css_library')
- 
 @endpush
 
 @push('css')
@@ -133,6 +132,7 @@
                         </app-pagination></nav>
                 </div>
             </div>
+
             <!-- Modal Add/Edit -->
             <div class="modal fade" id="addEditModal" tabindex="-1" aria-labelledby="addEditModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
@@ -144,24 +144,33 @@
                         <div class="modal-body">
                             <form id="addEditForm">
                                 <input type="hidden" id="attribute_value_id">
+
                                 <div class="mb-3">
                                     <label for="attribute_id" class="form-label">Attribute</label>
                                     <select class="form-select" id="attribute_id">
-                                        <!-- Options sẽ được tải bằng JavaScript -->
+                                        <!-- Options will be populated by JavaScript -->
                                     </select>
                                 </div>
+
                                 <div class="mb-3">
                                     <label for="value" class="form-label">Value</label>
                                     <input type="text" class="form-control" id="value" required>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="is_active" class="form-label">Is Active</label>
-                                    <div class="col-sm-10">
-                                        <div class="form-check form-switch ps-0"><label class="switch"><input
-                                                    type="checkbox" id="status" formcontrolname="status"
-                                                    class="  "><span class="switch-state"></span></label></div>
+
+                                <div id="is_variant_row" class="mb-3 d-none">
+                                    <!-- Is Variant switch (Only visible in Add mode) -->
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <label for="is_variant" class="form-label mb-0">Is Variant:</label>
+                                        <div class="form-check form-switch ps-0 mb-0">
+                                            <label class="switch">
+                                                <input type="checkbox" id="is_variant" formcontrolname="is_variant"
+                                                    class="">
+                                                <span class="switch-state"></span>
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
+
                                 <div class="d-flex justify-content-end gap-2">
                                     <button type="button" class="btn btn-secondary"
                                         data-bs-dismiss="modal">Close</button>
@@ -172,6 +181,8 @@
                     </div>
                 </div>
             </div>
+            <!-- Modal End -->
+
 
             <!-- Modal Confirm Delete -->
             <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"
@@ -214,33 +225,40 @@
                 $('#attribute_value_id').val('');
                 $('#attribute_id').val('');
                 $('#value').val('');
-                $('#is_active').val('1');
+                $('#is_variant').prop('checked', false); // Default state
+                $('#is_variant_row').removeClass('d-none'); // Show the Is Variant switch
                 $('#addEditModal').modal('show');
             }
-
+    
             // Hiển thị modal chỉnh sửa
-            window.openEditModal = function() {
+            window.openEditModal = function(attributeValueId) {
                 $('#addEditModalLabel').text('Edit Attribute Value');
-                $('#attribute_value_id').val('1'); // Example data
+                $('#attribute_value_id').val(attributeValueId); // Example data
                 $('#attribute_id').val('101'); // Example data
                 $('#value').val('Red'); // Example data
-                $('#is_active').val('1');
+                $('#is_variant_row').addClass('d-none'); // Hide the Is Variant switch for Edit
                 $('#addEditModal').modal('show');
             }
-
+    
             // Hiển thị modal xác nhận xóa
-            window.openDeleteModal = function() {
+            window.openDeleteModal = function(attributeValueId) {
+                // Đặt ID cần xóa vào một input ẩn hoặc bất kỳ trường nào
+                $('#attribute_value_id').val(attributeValueId);
                 $('#confirmDeleteModal').modal('show');
             }
-            // Thêm sự kiện cho nút xóa
+    
+            // Xử lý khi nhấn nút "Delete" trong modal xác nhận xóa
             $('#confirmDeleteButton').on('click', function(event) {
                 'use strict';
                 // Ngăn chặn hành động mặc định của nút (gửi form)
                 event.preventDefault();
-
-                // Hiển thị thông báo "Loading"
+    
+                // Lấy giá trị của ID để xóa
+                var attributeValueId = $('#attribute_value_id').val();
+    
+                // Ví dụ thông báo xóa thành công
                 var notify = $.notify(
-                    '<i class="fas fa-bell"></i><strong>SUCCESS</strong> Saving your data...', {
+                    '<i class="fas fa-bell"></i><strong>Deleting...</strong> Your data is being deleted...', {
                         type: 'info',
                         allow_dismiss: true,
                         delay: 3000,
@@ -251,31 +269,41 @@
                             exit: 'animated fadeOutUp'
                         }
                     });
-
-                // Sau 1 giây, cập nhật thông báo thành "Success"
+    
+                // Giả lập hành động xóa và hiển thị thông báo
                 setTimeout(function() {
-                    // Cập nhật thông báo hiện tại
+                    // Cập nhật thông báo thành "Success"
                     notify.update({
                         type: 'success',
                         message: '<i class="fas fa-check-circle"></i> <strong>Success:</strong> Your data has been deleted successfully!'
                     });
-
+    
                     // Đóng modal xác nhận xóa
                     $('#confirmDeleteModal').modal('hide');
-
-                }, 1000);
+    
+                    // Thực hiện xóa dữ liệu thực tế (gửi request API hoặc xóa từ DOM)
+                    // Ví dụ: Xóa dữ liệu từ DOM (hoặc gửi request API)
+                    // $('#row-' + attributeValueId).remove(); // Nếu bạn đang hiển thị trong bảng
+                }, 1000);  // Giả lập một khoảng thời gian xử lý
+    
             });
-
+    
             // Sự kiện mở modal thêm mới
             $('#addButton').on('click', openAddModal);
-
+    
             // Sự kiện mở modal chỉnh sửa
-            $('#editButton').on('click', openEditModal);
-
+            $('#editButton').on('click', function() {
+                openEditModal(1); // Pass your attribute_value_id here
+            });
+    
             // Sự kiện mở modal xóa
-            $('#deleteButton').on('click', openDeleteModal);
+            $('#deleteButton').on('click', function() {
+                openDeleteModal(1); // Pass your attribute_value_id here to delete
+            });
         });
     </script>
+    
+
     <!--modal thông báo-->
     <script>
         $('#saveButton').click(function(event) {
