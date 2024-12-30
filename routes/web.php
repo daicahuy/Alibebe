@@ -1,6 +1,5 @@
 <?php
-
-use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Web\Admin\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,21 +14,36 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return '<h2>@Copyright by Huy + Anh + Manh + Hiep + Quan + Tung + Bao</h2>';
 });
 
 
 
 /*--------------ADMIN--------------*/
 
-Route::prefix('admin')
+Route::prefix('/admin')
     ->name('admin.')
     ->group(function () {
 
-        Route::controller(AdminController::class)
-            ->group(function () {
+        Route::get('/', [DashboardController::class, 'index'])->name('index');
 
-                // Route::get('', 'index') ->name('index');
+        Route::get('/Attributes', function () {
+            return view('admin.pages.Attributes.listAttribute');
+        })->name('Attributes');
+        Route::get('/Attributes/add', function () {
+            // return view('admin.pages.Attributes.listAttribute');
+        })->name('Attributes.add');
+        
+        Route::get('/Attributes/edit/{id}', function () {
+            // return view('admin.pages.Attributes.listAttribute');
+        })->name('Attributes.edit');
 
-            });
+        Route::get('/Attributes/delete/{id}', function () {
+            // return view('admin.pages.Attributes.listAttribute');
+        })->name('Attributes.delete');
+
+        Route::get('/Attributes/Value',  function ()  {
+            return view('admin.pages.Attributes.AttributeValue');
+        })->name('Attributes.Value');
+        
     });
